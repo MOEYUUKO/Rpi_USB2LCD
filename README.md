@@ -4,17 +4,21 @@
 <h1>LCD2USB树莓派监控</h1>
 <h2>===硬件===</h2>
 <h3>需要有2个按钮[用于翻页]的LCD2USB的板子,上面接着2004的LCD,树莓派GPIO4上接温度计数据</h3>
-<figure class="third">
-<img src="https://github.com/MOEYUUKO/Rpi_USB2LCD/blob/master/image/1.jpg" height="200px"><img src="https://github.com/MOEYUUKO/Rpi_USB2LCD/blob/master/image/2.jpg" height="200px">
-</figure>
+<table><tr>
+<td><img src="https://github.com/MOEYUUKO/Rpi_USB2LCD/blob/master/image/1.jpg" height="200px"></td>
+<td><img src="https://github.com/MOEYUUKO/Rpi_USB2LCD/blob/master/image/2.jpg" height="200px"></td>
+</tr></table>
 <div>连接树莓派</div>
-<figure class="third">
-<img src="https://github.com/MOEYUUKO/Rpi_USB2LCD/blob/master/image/3.jpg" height="200px"><img src="https://github.com/MOEYUUKO/Rpi_USB2LCD/blob/master/image/4.jpg" height="200px"><img src="https://github.com/MOEYUUKO/Rpi_USB2LCD/blob/master/image/5.jpg" height="200px">
-</figure>
+<table><tr>
+<td><img src="https://github.com/MOEYUUKO/Rpi_USB2LCD/blob/master/image/3.jpg" height="200px"></td>
+<td><img src="https://github.com/MOEYUUKO/Rpi_USB2LCD/blob/master/image/4.jpg" height="200px"></td>
+<td><img src="https://github.com/MOEYUUKO/Rpi_USB2LCD/blob/master/image/5.jpg" height="200px"></td>
+</tr></table>
 <div>目前的3页 往上一页然后长按可重启程序</div>
-<figure class="third">
-<img src="https://github.com/MOEYUUKO/Rpi_USB2LCD/blob/master/image/6.jpg" height="200px"><img src="https://github.com/MOEYUUKO/Rpi_USB2LCD/blob/master/image/7.jpg" height="200px">
-</figure>
+<table><tr>
+<td><img src="https://github.com/MOEYUUKO/Rpi_USB2LCD/blob/master/image/6.jpg" height="200px"></td>
+<td><img src="https://github.com/MOEYUUKO/Rpi_USB2LCD/blob/master/image/7.jpg" height="200px"></td>
+</tr></table>
 <div>温度计连接</div>
 <br>
 <h2>===依赖===</h2>
