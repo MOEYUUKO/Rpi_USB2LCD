@@ -20,11 +20,11 @@
 <td><img src="https://github.com/MOEYUUKO/Rpi_USB2LCD/blob/master/image/6.jpg" height="200px"></td>
 <td><img src="https://github.com/MOEYUUKO/Rpi_USB2LCD/blob/master/image/7.jpg" height="200px"></td>
 </tr></table>
-<div>新加的气压传感器和光线传感器</div>
+<div>新加的气压传感器和光线传感器[i2c连接]</div>
 <table><tr>
-<td><img src="https://github.com/MOEYUUKO/Rpi_USB2LCD/blob/master/image/8.jpg" height="100px"></td>
-<td><img src="https://github.com/MOEYUUKO/Rpi_USB2LCD/blob/master/image/9.jpg" height="100px"></td>
-<td><img src="https://github.com/MOEYUUKO/Rpi_USB2LCD/blob/master/image/10.jpg" height="100px"></td>
+<td><img src="https://github.com/MOEYUUKO/Rpi_USB2LCD/blob/master/image/8.jpg" height="150px"></td>
+<td><img src="https://github.com/MOEYUUKO/Rpi_USB2LCD/blob/master/image/9.jpg" height="150px"></td>
+<td><img src="https://github.com/MOEYUUKO/Rpi_USB2LCD/blob/master/image/10.jpg" height="150px"></td>
 </tr></table>
 <br>
 <h2>===使用的开源项目===</h2>
