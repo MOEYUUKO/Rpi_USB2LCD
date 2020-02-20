@@ -9,7 +9,8 @@ import sys
 #
 def get_cpu_used():
 	cpu_used = commands.getoutput( 'top -n 2 -d 0.5| grep Cpu' ).split()[24]
-	return 100 - float(cpu_used)
+	cpu_used_re = 100 - float(cpu_used)
+	return cpu_used_re
 #
 def get_cpu_temp():
 	tmpFile = open( '/sys/class/thermal/thermal_zone0/temp' )
@@ -35,14 +36,15 @@ def get_men_total():
 	tmpFile = open( '/proc/meminfo' )
 	lines = tmpFile.readlines()
 	mem_total = round(float(lines[0].split()[1]) / 1024, 1)
-	return mem_total
+	return float(mem_total)
 #
 def get_men_used():
 	tmpFile = open( '/proc/meminfo' )
 	lines = tmpFile.readlines()
 	mem_total = round(float(lines[0].split()[1]) / 1024, 1)
 	mem_free = round(float(lines[2].split()[1]) / 1024, 1)
-	men_used = round((mem_free/mem_total)*100)
+	men_used = round((mem_free/mem_total)*100, 1)
+	men_used = 100 - men_used
 	return men_used
 #
 def get_disk_total():

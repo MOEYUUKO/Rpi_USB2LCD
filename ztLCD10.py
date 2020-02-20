@@ -13,7 +13,11 @@ from datetime import datetime
 from lcd2usb import LCD
 
 from state import *
+from bmp180 import BMP180
+bmp = BMP180()
+import bh1750
 
+exit_flag = 0
 #
 ECHO_NUM = 100
 def lcd_echo(lcd):
@@ -41,16 +45,33 @@ else:
 
 
 ################---变量区---##############
-briLD  = 90			#亮度
+briLD  = -1			#亮度 // -1 = 自动auto
 conDBD = 164		#对比度
 ##########################################
 
-########设置###########
-lcd.set_brightness(briLD)
+#自动亮度
+def auto_brightness():
+	lx_old = -1
+	while exit_flag != 1:
+		lx = int(bh1750.getIlluminance())
+		if lx !=0:
+			lx = lx + 20
+		if lx >=256:
+			lx = 255
+
+		if lx != lx_old: #减少调用次数
+			lcd.set_brightness(lx)
+		lx_old = lx
+
+
+if briLD == -1:
+	thread.start_new_thread(auto_brightness,())
+else:
+	lcd.set_brightness(briLD)
 lcd.set_contrast(conDBD)
-#######################
-#lcd.clear()
-exit_flag = 0
+
+
+
 
 def Loading():
 	lcd.home()
@@ -65,7 +86,7 @@ def Loading():
 	lcd.write('=Moeyuuko=')
 	sleep(0.5)
 	lcd.goto(5,3)
-	lcd.write('[v10.0]')
+	lcd.write('[v10.2]')
 	sleep(0.5)
 
 thread.start_new_thread(Loading,())
@@ -93,18 +114,24 @@ def restart_program():
 
 
 #
+dht = "NO DATA"
 def DHT():
-	global wd2
-	global exit_flag
+	global dht
 	sensor = Adafruit_DHT.DHT22
 	pin = 4  #GPIO4
 	while exit_flag != 1:
 		humidity, temperature = Adafruit_DHT.read_retry(sensor, pin)
 		if humidity is not None and temperature is not None:
-    			wd2 = 'T{0:0.1f} H{1:0.1f}'.format(temperature, humidity)
+    			dht = 'T{0:0.1f} H{1:0.1f}'.format(temperature, humidity)
 		else:
-			wd2 = 'Temp_Error'
+			dht = 'Temp_Error'
 		sleep(5)
+#
+def Barometer():
+	global pressure
+	while exit_flag != 1:
+		pressure = bmp.read_pressure()
+		sleep(0.2)
 #
 def SSTS():
 	for i in range(256)[::-1]:
@@ -118,7 +145,6 @@ def SSTS():
 def Network_Availability():
 	global network
 	global CCC
-	global exit_flag
 
 	while exit_flag != 1:
 		CCC = str(get_ip_addr())
@@ -130,7 +156,6 @@ def Network_Availability():
 #
 def Network_speed():
 	global wlsd
-	global exit_flag
 	while exit_flag != 1:
 		A=os.popen('ifstat -i eth0  1 1')
 		wlsd=A.read();
@@ -143,12 +168,12 @@ def Network_speed():
 def Key_Daemon():  #按键状态
 	global layout
 	global lcd
-	global exit_flag
 	global reload
 	global errors
-	
+	global exit_flag
+
 	reload_set = 8
-	layout_MAX = 2
+	layout_MAX = 3
 	layout_MIN = 0 
 
 	reload = reload_set
@@ -187,23 +212,38 @@ def Key_Daemon():  #按键状态
 ######
 
 def main_layout():   #主屏幕
-	global wd2
 	global network
 	global wlsd
-	global exit_flag
-	A = datetime.now().strftime('%Y ')+'cpu:'+str(get_cpu_temp())+'C '+str(get_cpu_used())+'%'
-	B = str(get_men_used())+'%'
+	
+	gcu = int(round(get_cpu_used()))
+	if gcu >= 100:
+		gcu_out = " 100%"
+	elif gcu < 10:
+		gcu_out = "C  " + str(gcu) + "%"
+	else:
+		gcu_out = "C " + str(gcu) + "%"
+
+	Y = datetime.now().strftime('%Y ')
+
+	M = str(get_men_used())+'%'
+	C = str(get_cpu_temp())+''+str(gcu_out)
 
 	lcd.clear()
 	lcd.home()
 	lcd.goto(19,2)
 	lcd.write('o')
 	lcd.goto(0,0)
-	lcd.write(A)
+	lcd.write(Y)
+	lcd.goto(5,0)
+	lcd.write(M)
+	lcd.goto(11,0)
+	lcd.write(C)
+
 	lcd.goto(1,1)
-	lcd.write(B)
-	lcd.goto(8,1)
-	lcd.write(wd2)
+	lcd.write(str(pressure / 100.0))
+
+	lcd.goto(9,1)
+	lcd.write(dht)
 	lcd.goto(0,3)
 	lcd.write(datetime.now().strftime('%m/%d %w %p %l:%M:%S'))
 	lcd.goto(0,2)
@@ -245,6 +285,14 @@ def reload_layout():   #重载程序
 			lcd.write('reload ?')
 
 
+def test_layout():
+	lx = bh1750.getIlluminance()
+	lcd.clear()
+	lcd.goto(0,0)
+	lcd.write(str(lx)+"Lx")
+	lcd.goto(9,0)
+	lcd.write(str(pressure / 100.0)+"hPa")
+
 def main():
 	global lcd
 	global layout
@@ -254,7 +302,7 @@ def main():
 	RE_welcome = 0
 	errors = 0
 	lcd = LCD()
-
+	print ('ok')
 	while(True):
 		try:
 			if errors == 0:
@@ -278,6 +326,10 @@ def main():
 					Network_layout()
 					sleep(0.9)
 
+				elif layout == 3:
+					test_layout()
+					sleep(0.9)
+
 				elif layout == 0:
 					reload_layout()
 					sleep(0.9)
@@ -299,7 +351,7 @@ def main():
 			break
 		except:
 			errors = 1
-			sleep(5)
+			print ('device error')
 			while errors != 0:
 				USB = os.popen('lsusb')
 				A = USB.read()
@@ -308,12 +360,12 @@ def main():
 					print ('NO device!')
 					errors = 1
 				else:
-					print ('ok')
+					#print ('ok')
 					errors = 0
 				
 		
 
-wd2=''
+
 wlsd=''
 network=''
 layout = 1
@@ -322,14 +374,16 @@ layout = 1
 
 
 thread.start_new_thread(DHT,())
+thread.start_new_thread(Barometer,())
 thread.start_new_thread(Network_Availability,())
 thread.start_new_thread(Network_speed,())
 
-print ('ok')
+#print ('ok')
 sleep(2)
 
 
 if __name__ == '__main__':
+	
 	try:
 		print ('LCD runing.....'+str(os.getpid()))
 		main()
