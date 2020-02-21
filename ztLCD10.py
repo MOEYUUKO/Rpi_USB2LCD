@@ -300,13 +300,14 @@ def test_layout():
 	lcd.write(str(lx)+"Lx")
 	lcd.goto(9,0)
 	lcd.write(str(pressure / 100.0)+"hPa")
+
 	lcd.goto(0,1)
-	lcd.write(str(temperature)+"C")
+	lcd.write("{:0.1f}C".format(temperature))
 	lcd.goto(9,1)
-	lcd.write(str(bmp_temp)+"C")
+	lcd.write("{:0.1f}C".format(bmp_temp))
 	average_temp = (temperature + bmp_temp)/2
 	lcd.goto(4,2)
-	lcd.write(str(average_temp)+"C")
+	lcd.write("{:0.1f}C".format(average_temp))
 
 def main():
 	global lcd
