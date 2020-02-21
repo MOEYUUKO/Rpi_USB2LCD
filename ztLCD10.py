@@ -114,23 +114,29 @@ def restart_program():
 
 
 #
-dht = "NO DATA"
-def DHT():
-	global dht
+tah_out = "NO DATA"
+def TAH():      #Temperature and humidity
+	global tah_out
+	global temperature
 	sensor = Adafruit_DHT.DHT22
 	pin = 4  #GPIO4
 	while exit_flag != 1:
 		humidity, temperature = Adafruit_DHT.read_retry(sensor, pin)
 		if humidity is not None and temperature is not None:
-    			dht = 'T{0:0.1f} H{1:0.1f}'.format(temperature, humidity)
+				average_temp = (temperature + bmp_temp)/2
+				tah_out = 'T{0:0.1f} H{1:0.1f}'.format(average_temp, humidity)
 		else:
-			dht = 'Temp_Error'
+			tah_out = 'Temp_Error'
 		sleep(5)
 #
-def Barometer():
+pressure = 0
+bmp_temp = 0
+def Bmp180():
 	global pressure
+	global bmp_temp
 	while exit_flag != 1:
 		pressure = bmp.read_pressure()
+		bmp_temp = bmp.read_temperature()
 		sleep(0.2)
 #
 def SSTS():
@@ -201,6 +207,7 @@ def Key_Daemon():  #按键状态
 								end_1()
 								time.sleep(1)
 								restart_program()
+								time.sleep(1)
 								break
 							elif reload > 0:
 								reload=reload-1
@@ -243,7 +250,7 @@ def main_layout():   #主屏幕
 	lcd.write(str(pressure / 100.0))
 
 	lcd.goto(9,1)
-	lcd.write(dht)
+	lcd.write(tah_out)
 	lcd.goto(0,3)
 	lcd.write(datetime.now().strftime('%m/%d %w %p %l:%M:%S'))
 	lcd.goto(0,2)
@@ -287,11 +294,19 @@ def reload_layout():   #重载程序
 
 def test_layout():
 	lx = bh1750.getIlluminance()
+	
 	lcd.clear()
 	lcd.goto(0,0)
 	lcd.write(str(lx)+"Lx")
 	lcd.goto(9,0)
 	lcd.write(str(pressure / 100.0)+"hPa")
+	lcd.goto(0,1)
+	lcd.write(str(temperature)+"C")
+	lcd.goto(9,1)
+	lcd.write(str(bmp_temp)+"C")
+	average_temp = (temperature + bmp_temp)/2
+	lcd.goto(4,2)
+	lcd.write(str(average_temp)+"C")
 
 def main():
 	global lcd
@@ -373,8 +388,8 @@ layout = 1
 
 
 
-thread.start_new_thread(DHT,())
-thread.start_new_thread(Barometer,())
+thread.start_new_thread(TAH,())
+thread.start_new_thread(Bmp180,())
 thread.start_new_thread(Network_Availability,())
 thread.start_new_thread(Network_speed,())
 
