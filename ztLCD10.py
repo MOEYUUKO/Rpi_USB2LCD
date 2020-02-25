@@ -53,10 +53,16 @@ conDBD = 164		#对比度
 def auto_brightness():
 	lx_old = -1
 	while exit_flag != 1:
-		lx = int(bh1750.getIlluminance())
-		if lx !=0:
-			lx = lx + 20
-		if lx >=256:
+		lx = int(bh1750.getIlluminance()) #读下亮度
+
+		T = datetime.now().strftime('%H') #读下时间
+
+		if lx == 0 and T>=1 or T<=5: #1点到5点亮度0才降到0s
+			lx = 0
+		else:
+			lx = lx + 20 #否则 加20亮度 避免太暗
+
+		if lx >=256: #亮度最高255 避免错误数值
 			lx = 255
 
 		if lx != lx_old: #减少调用次数
@@ -64,10 +70,10 @@ def auto_brightness():
 		lx_old = lx
 
 
-if briLD == -1:
-	thread.start_new_thread(auto_brightness,())
+if briLD == -1:  #判断是否自动
+	thread.start_new_thread(auto_brightness,())#启动自动线程
 else:
-	lcd.set_brightness(briLD)
+	lcd.set_brightness(briLD) #手动
 lcd.set_contrast(conDBD)
 
 
@@ -89,10 +95,10 @@ def Loading():
 	lcd.write('[v10.2]')
 	sleep(0.5)
 
-thread.start_new_thread(Loading,())
+thread.start_new_thread(Loading,())#马上启动 上面的欢迎文字
 
 
-def end_1():
+def end_1():#程序关闭
 	sleep(1)
 	lcd.clear()
 	lcd.goto(0,1)
@@ -292,7 +298,7 @@ def reload_layout():   #重载程序
 			lcd.write('reload ?')
 
 
-def test_layout():
+def test_layout():   #测试 看传感器数值用
 	lx = bh1750.getIlluminance()
 	
 	lcd.clear()
@@ -309,7 +315,7 @@ def test_layout():
 	lcd.goto(4,2)
 	lcd.write("{:0.1f}C".format(average_temp))
 
-def main():
+def main():  #主循环
 	global lcd
 	global layout
 	global exit_flag
