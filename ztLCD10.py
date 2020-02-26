@@ -56,8 +56,9 @@ def auto_brightness():
 		lx = int(bh1750.getIlluminance()) #读下亮度
 
 		T = datetime.now().strftime('%H') #读下时间
+		#T = 2
 
-		if lx == 0 and T>=1 or T<=5: #1点到5点亮度0才降到0s
+		if lx == 0 and T>=1 and T<=5: #1点到5点亮度0才降到0s
 			lx = 0
 		else:
 			lx = lx + 20 #否则 加20亮度 避免太暗
@@ -184,7 +185,7 @@ def Key_Daemon():  #按键状态
 	global errors
 	global exit_flag
 
-	reload_set = 8
+	reload_set = 7
 	layout_MAX = 3
 	layout_MIN = 0 
 
