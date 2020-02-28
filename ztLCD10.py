@@ -55,10 +55,9 @@ def auto_brightness():
 	while exit_flag != 1:
 		lx = int(bh1750.getIlluminance()) #读下亮度
 
-		T = datetime.now().strftime('%H') #读下时间
-		#T = 2
+		T = int(datetime.now().strftime('%H')) #读下时间
 
-		if lx == 0 and T>=1 and T<=5: #1点到5点亮度0才降到0s
+		if lx == 0 and T>=1 and T<=5: #1点到5点亮度0才降到0
 			lx = 0
 		else:
 			lx = lx + 20 #否则 加20亮度 避免太暗
